@@ -27,6 +27,7 @@ const renderCountry = (data, className = '') => {
     </div>
   </article>`;
   countriesContainer.insertAdjacentHTML('beforeend', html);
+  countriesContainer.style.opacity = 1;
 };
 
 const getJSON = function (url, errorMsg = 'Something went wrong') {
@@ -190,14 +191,50 @@ createImage('img/img-1.jpg')
   .catch(err => console.error(err)); */
 
 //////////////////////////////////////////////////////
-const whereAmI2 = async function (country) {
-  // fetch(`https://restcountries.com/v3.1/name/${country}`)
-  // .then(res=>console.log(res));
+/* const whereAmI2 = async function () {
+  try {
+    const pos = await getPosition();
+    const { latitude: lat, longitude: lng } = pos.coords;
+    const resGeo = await fetch(
+      `https://geocode.xyz/${lat},${lng}?geoit=json&auth=369140244988012877940x7595`
+    );
+    if (!resGeo) throw new Error('Problem getting location data');
+    const dataGeo = await resGeo.json();
+    const res = await fetch(
+      `https://restcountries.com/v3.1/name/${dataGeo.country}`
+    );
+    if (!res) throw new Error('Problem getting new country');
+    const data = await res.json();
+    renderCountry(data[0]);
 
-  const res = await fetch(`https://restcountries.com/v3.1/name/${country}`);
-  const data = await res.json();
-  renderCountry(data[0]);
-  console.log(data[0]);
+    return `2. You are in ${dataGeo.city}, ${dataGeo.country}`;
+  } catch (err) {
+    console.error(err.message);
+    renderError(`Something went wrong ${err.message}`);
+
+    //Reject promise returned from async
+    throw err;
+  }
+}; */
+
+/* (async function () {
+  console.log('1. Will get location');
+  try {
+    const city = await whereAmI2();
+    console.log(city);
+  } catch (err) {
+    console.error(err.message);
+  } finally {
+    console.log('3. Finished getting location');
+  }
+})(); */
+
+const get3Countries = async function (c1, c2, c3) {
+  try {
+    const [data1] = await getJSON(`https://restcountries.com/v3.1/name/${c1}`);
+    const [data2] = await getJSON(`https://restcountries.com/v3.1/name/${c2}`);
+    const [data3] = await getJSON(`https://restcountries.com/v3.1/name/${c3}`);
+  } catch (err) {
+    console.error(err);
+  }
 };
-
-whereAmI2('portugal');
