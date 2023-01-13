@@ -93,16 +93,15 @@ const getPosition = function () {
 btn.addEventListener('click', function () {
   whereAmI();
 });
-
-/* console.log('Test start');
-
+////////// Creating Promises ///////////////////
+/* 
+console.log('Test start');
 setTimeout(() => console.log('o sec timer'), 0);
 Promise.resolve('Resolved Promise 1').then(res => console.log(res));
 Promise.resolve('Resolved promise 2').then(res => {
   for (let i = 0; i < 1000000000; i++) {}
   console.log(res);
 });
-
 console.log('Test end'); */
 //////////////////////////////////////////////////////
 
@@ -115,17 +114,16 @@ console.log('Test end'); */
       reject(new Error('You LOSE!'));
     }
   }, 2000);
-}); */
+}); 
 
-// lotteryPromise.then(res => console.log(res)).catch(err => console.error(err));
+ lotteryPromise.then(res => console.log(res)).catch(err => console.error(err));
 
 // Promisifying SetTimeout
-/* const wait = function (ms) {
+ const wait = function (ms) {
   return new Promise(res => {
     setTimeout(res, ms);
   });
 };
-
 
 wait(2000)
   .then(() => {
@@ -133,10 +131,6 @@ wait(2000)
     return wait(1000);
   })
   .then(() => console.log('I waited 1 s'));
-
-
-// Promise.resolve('abc').then(res => console.log(res));
-// Promise.reject(new Error('abc')).catch(res => console.log(res));
  */
 /* 
 ///////CHALLENGE 2//////////////////
@@ -290,3 +284,56 @@ Promise.any([
   Promise.resolve('Success'),
 ]).then(res => console.log(res));
  */
+
+///////////CHALLENGE 3 //////////////////////
+const createImage2 = imgPath => {
+  return new Promise((resolve, reject) => {
+    const imgEl = document.createElement('img');
+    imgEl.src = imgPath;
+
+    imgEl.addEventListener('load', () => {
+      const containerEl = document.querySelector('.images');
+      containerEl.appendChild(imgEl);
+      resolve(imgEl);
+    });
+
+    imgEl.addEventListener('error', () => {
+      reject(new Error('Error loading the file'));
+    });
+  });
+};
+
+const wait2 = function (ms) {
+  return new Promise(res => {
+    setTimeout(res, ms);
+  });
+};
+
+const loadNPause = async function () {
+  try {
+    let currentImg = await createImage2('img/img-1.jpg');
+    await wait2(2000);
+    currentImg.style.display = 'none';
+    currentImg = await createImage2('img/img-2.jpg');
+    await wait2(2000);
+    currentImg.style.display = 'none';
+    currentImg = await createImage2('img/img-3.jpg');
+    await wait2(2000);
+    currentImg.style.display = 'none';
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+// loadNPause();
+
+const loadAll = async function (imgArr) {
+  try {
+    const imgs = imgArr.map(async img => await createImage2(img));
+    console.log(imgs);
+    const imgsEl = await Promise.all(imgs);
+    console.log(imgsEl);
+    imgsEl.forEach(img => img.classList.add('parallel'));
+  } catch (error) {}
+};
+loadAll(['img/img-1.jpg', 'img/img-2.jpg', 'img/img-3.jpg']);
