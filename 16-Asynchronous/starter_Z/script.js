@@ -5,36 +5,6 @@ const countriesContainer = document.querySelector('.countries');
 
 ///////////////////////////////////////
 
-/* const getCountryData = country => {
-  const request = new XMLHttpRequest();
-  request.open('GET', `https://restcountries.com/v3.1/name/${country}`);
-  request.send();
-
-  request.addEventListener('load', function () {
-    const [data] = JSON.parse(this.responseText);
-    console.log(data);
-
-    const html = `
-  <article class="country">
-  <img class="country__img" src="${data.flags.png}" />
-  <div class="country__data">
-    <h3 class="country__name">${data.name.common}</h3>
-    <h4 class="country__region">${data.region}</h4>
-    <p class="country__row"><span>👫</span>${(
-      +data.population / 1000000
-    ).toFixed(1)} people</p>
-    <p class="country__row"><span>🗣️</span>${Object.values(data.languages)}</p>
-    <p class="country__row"><span>💰</span>${Object.keys(data.currencies)}</p>
-  </div>
-</article>`;
-    countriesContainer.insertAdjacentHTML('beforeend', html);
-    countriesContainer.style.opacity = 1;
-  });
-}; */
-
-// getCountryData('Portugal');
-///////////////////////////////////////
-
 const renderError = function (msg) {
   countriesContainer.insertAdjacentText('beforeend', msg);
   countriesContainer.style.opacity = 1;
@@ -59,44 +29,6 @@ const renderCountry = (data, className = '') => {
   countriesContainer.insertAdjacentHTML('beforeend', html);
 };
 
-/* const getCountryAndNeighbour = country => {
-  //AJAX Call country 1
-  const request = new XMLHttpRequest();
-  request.open('GET', `https://restcountries.com/v3.1/name/${country}`);
-  request.send();
-
-  request.addEventListener('load', function () {
-    const [data] = JSON.parse(this.responseText);
-    console.log(data);
-
-    // render first country
-    renderCountry(data);
-
-    // get neighbout country 2
-    const neighbour = data.borders?.[0];
-
-    //AJAX Call country 2
-    const request2 = new XMLHttpRequest();
-    request2.open('GET', `https://restcountries.com/v3.1/alpha/${neighbour}`);
-    request2.send();
-
-    request2.addEventListener('load', function () {
-      const [data2] = JSON.parse(this.responseText);
-      console.log(data2);
-
-      // render first country
-      renderCountry(data2, 'neighbour');
-    });
-  });
-};
- */
-// getCountryAndNeighbour('Bosnia');
-
-// //AJAX Call country 1
-// const request = new XMLHttpRequest();
-// request.open('GET', `https://restcountries.com/v3.1/name/${country}`);
-// request.send();
-
 const getJSON = function (url, errorMsg = 'Something went wrong') {
   return fetch(url).then(response => {
     if (!response.ok) throw new Error(`${errorMsg} ${response.status}`);
@@ -104,7 +36,7 @@ const getJSON = function (url, errorMsg = 'Something went wrong') {
   });
 };
 
-const getCountryData2 = function (country) {
+const getCountryData = function (country) {
   getJSON(`https://restcountries.com/v3.1/name/${country}`, 'Country not found')
     .then(data => {
       renderCountry(data[0]);
@@ -128,6 +60,23 @@ const getCountryData2 = function (country) {
     });
 };
 
+const whereAmI = function (lat, lng) {
+  fetch(
+    `https://geocode.xyz/${lat},${lng}?geoit=json&auth=369140244988012877940x7595`
+  )
+    .then(response => response.json())
+    .then(data => {
+      getCountryData(data.country);
+      console.log(`You are in ${data.city}, ${data.country}`);
+    })
+    .catch(err =>
+      console.error(`Something went wrong ${err.message}. Try again`)
+    );
+};
+
+const myLat = 48.210033;
+const myLong = 16.363449;
+
 btn.addEventListener('click', function () {
-  getCountryData2('australia');
+  whereAmI(myLat, myLong);
 });
